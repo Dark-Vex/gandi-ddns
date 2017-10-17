@@ -10,6 +10,9 @@ except ImportError:
 import sys
 import os
 import socket
+import datetime
+
+today = datetime.datetime.today()
 
 # Used to cache the zone_id for future calls
 zone_id = None
@@ -35,7 +38,7 @@ def get_zone_id(config, section):
         current_zone_id = domain_info['zone_id']
 
         if current_zone_id == 'None':
-            print('No zone - make sure domain is set to use \
+            print(today, 'No zone - make sure domain is set to use \
                   gandi.net name servers.')
             sys.exit(1)
 
@@ -68,7 +71,7 @@ def get_ip():
         # ASCII IP address (not HTML etc)
         result = urlopen("https://api.ipify.org", timeout=3).read()
     except Exception:
-        print('Unable to external IP address.')
+        print(today, 'Unable to external IP address.')
         sys.exit(2)
 
     return result.decode()
@@ -142,12 +145,12 @@ def main():
         if (zone_ip.strip() == current_ip.strip()):
             sys.exit()
         else:
-            print('DNS Mistmatch detected: A-record: ',
+            print(today, 'DNS Mistmatch detected: A-record: ',
                   zone_ip, ' WAN IP: ', current_ip)
             change_zone_ip(config, section, current_ip)
             zone_id = None
             zone_ip = get_zone_ip(config, section)
-            print('DNS A record update complete - set to ', zone_ip)
+            print(today, 'DNS A record update complete - set to ', zone_ip)
 
 
 if __name__ == "__main__":
